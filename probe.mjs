@@ -1,0 +1,12 @@
+import { chromium } from "playwright-core";
+import path from "node:path";
+const exe = "/Users/thaitrn/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing";
+const browser = await chromium.launch({ executablePath: exe, headless: true });
+const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+page.on("pageerror", e => console.log("PAGEERROR:", String(e)));
+page.on("console", m => console.log("CONSOLE", m.type(), m.text().slice(0, 300)));
+await page.goto("file://" + path.resolve("dist/index.html"));
+await page.waitForTimeout(6000);
+console.log("tag:", await page.textContent("#engine-tag").catch(()=>null));
+console.log("hook:", await page.evaluate("JSON.stringify(window.__bgTest||null)"));
+await browser.close();

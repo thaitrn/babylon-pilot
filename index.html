@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Khoa học lung linh — Babylon.js pilot</title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; touch-action: none; overscroll-behavior: none; }
+  #renderCanvas { width: 100%; height: 100%; display: block; outline: none; touch-action: none; }
+  #hud {
+    position: fixed; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 0; right: 0;
+    display: flex; justify-content: center; gap: 14px; pointer-events: none;
+    font-family: -apple-system, system-ui, sans-serif; color: #cfe9ff;
+    text-shadow: 0 0 10px #37a6ff88; font-size: 16px; z-index: 10; user-select: none;
+  }
+  #hud b { color: #fff; }
+  #engine-tag { position: fixed; bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); left: 12px; font-size: 11px; color: #7fb6d8aa; font-family: monospace; pointer-events: none; z-index: 10; }
+</style>
+</head>
+<body>
+  <canvas id="renderCanvas"></canvas>
+  <div id="hud">✨ <b id="score">0</b>/10 <span id="fps" style="opacity:.7"></span></div>
+  <div id="engine-tag">init…</div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
