@@ -32,8 +32,14 @@ async function createEngine(): Promise<Engine> {
   const gpu = (navigator as any).gpu;
   if (gpu) {
     try {
-      const e = new Engine(canvas, true, { antialias: true }, true);
-      await (e as any)._initAsync?.();
+      // race với timeout — iOS Safari có thể treo init WebGPU vĩnh viễn
+      const attempt = (async () => {
+        const e = new Engine(canvas, true, { antialias: true }, true);
+        await (e as any)._initAsync?.();
+        return e;
+      })();
+      const t = new Promise<never>((_, rej) => setTimeout(() => rej(new Error("wgpu timeout")), 2500));
+      const e = await Promise.race([attempt, t]);
       tagEl.textContent = "WebGPU";
       return e;
     } catch { /* fall through */ }
