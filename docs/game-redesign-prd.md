@@ -1,7 +1,7 @@
 # PRD — Linh Quang: Vượt Bão
 
 - Sản phẩm: Babylon Pilot redesign
-- Trạng thái: **Ready for MVP implementation**
+- Trạng thái: **Design-ready for CEO review — chưa duyệt tích hợp artifact**
 - Owner: Product / BA / Solution Architecture / UI/UX
 - Ngày chốt: 2026-08-30 (GMT+7)
 - Canonical URL: https://thaitrn.github.io/babylon-pilot/
@@ -399,6 +399,62 @@ Hazard phải có core đỏ/nhọn; không chỉ đổi vàng sang tím. Backgr
 - Không animation trang trí vô hạn trên DOM. Aurora ở scene có quality tiers.
 - Reduced motion: no full-screen flash, camera impulse <=2px equivalent, particle emit giảm >=50%.
 
+### 8.4 Visual direction và artifact Meowa — CEO review gate
+
+**Vai trò UI/UX + Product:** bộ 2D dưới đây là concept/marketing/HUD source phù hợp scene 3D tối giản hiện tại; không được mô tả như model 3D hay tự động thay thế primitive Babylon.js. Silhouette player trắng-xanh, collectible vàng bo tròn và hazard đỏ-tím nhọn giữ đúng contract mục 4.1. Background tiếp tục là navy/aurora giảm saturation để gameplay object nổi rõ.
+
+**Lựa chọn chính**
+
+- Player/vehicle: `hero-lightcraft.png`, phi thuyền ánh sáng dạng chim nhìn từ trên-sau; thân rộng và cyan edge giúp đọc lane ở kích thước nhỏ.
+- Hazard family: ba mảnh vỡ đỏ-tím bất đối xứng trong `hazard-family.png`; khác shard bằng cả đầu nhọn, khối dọc và hue, không dựa riêng vào màu.
+- Reward: `light-shard.png`, khối vàng tròn/kim cương. `shield.png` là motif cho HUD/feedback. `speed-boost.png` chỉ là visual reference, **không** thêm power-up/boost vào MVP vì mục 4.2 và Won't scope không cho input/collectible thứ hai.
+- HUD: sound, pause, shard, shield, left/right cùng một ngôn ngữ cyan/navy. Runtime chỉ chọn sound/pause/shard/shield; left/right là reference cho tutorial nếu cần, không biến ba vùng chạm vô hình thành button che gameplay.
+- GameHub: icon 512×512 dùng hero trên nền navy/cyan; cover được hậu xử lý đúng 1200×630 từ Meowa source với 3 lane, Cổng Bình Minh, hero, shard và hazard. Đây là key art 2D, không phải screenshot gameplay 3D.
+
+**Palette artifact** giữ các token mục 8.1: navy `#05081A/#11265B`, player cyan `#EAFBFF/#66E3FF`, shard `#FFD76A`, hazard đỏ-tím `#FF4D6D/#A63DFF`. Không lấy màu nền xám dùng cho bước remove-background làm màu runtime.
+
+#### Asset manifest
+
+| File | Kích thước / mode | Purpose |
+|---|---:|---|
+| `assets/meowa/source/asset-sheet-run/.../ui_output.png` | 1536×1152 RGBA | Meowa source sheet; 26 segmentation bounds, không dùng trực tiếp trong runtime |
+| `assets/meowa/selected/hero-lightcraft.png` | 447×423 RGBA | Player/vehicle 2D concept và source cho icon/cover |
+| `assets/meowa/selected/hazard-a.png` | 181×363 RGBA | Hazard variant A |
+| `assets/meowa/selected/hazard-b.png` | 208×359 RGBA | Hazard variant B |
+| `assets/meowa/selected/hazard-c.png` | 332×363 RGBA | Hazard variant C |
+| `assets/meowa/selected/hazard-family.png` | 900×400 RGBA | Preview/contract cho ba hazard; không phải atlas runtime đã đóng gói |
+| `assets/meowa/selected/light-shard.png` | 245×250 RGBA | Collectible/reward concept |
+| `assets/meowa/selected/shield.png` | 234×272 RGBA | Shield HUD/feedback motif |
+| `assets/meowa/selected/speed-boost.png` | 216×220 RGBA | Rejected-from-MVP visual reference; không tích hợp gameplay |
+| `assets/meowa/selected/hud-{sound,pause,shard,shield}.png` | 192–197×193–197 RGBA | Candidate UI control/status icons |
+| `assets/meowa/selected/hud-{left,right}.png` | 149×189 / 150×190 RGBA | Tutorial/reference only |
+| `assets/meowa/selected/app-icon-512.png` | 512×512 RGBA, opaque | App/GameHub icon candidate |
+| `assets/meowa/selected/gamehub-cover-1200x630.png` | 1200×630 RGB | GameHub cover candidate |
+| `assets/meowa/contact-sheet.png` | 1800×1500 RGB | CEO review sheet |
+| `assets/meowa/process_assets.py` | deterministic Pillow script | Crop segmentation bounds, compose icon/cover/contact sheet; không phải runtime dependency |
+
+#### Provenance, hậu xử lý và chi phí
+
+- Meowa job: `job_aff52e9d3a46447fbafaff06da954197`; capability `ui-gen-run`, Generate, Image-2, 1K, 4:3, Standard, normal path, standard background removal. Sanitized source manifest nằm cạnh `ui_output.png` trong `final_outputs.json`.
+- Hậu xử lý local có kiểm soát bằng `assets/meowa/process_assets.py`: crop đúng segmentation bounds đã trả về, ghép hazard family, resize Lanczos, thêm nền/glow/lane/portal và typography cho icon/cover; không chạy thêm generative model và không giả lập model 3D.
+- Credits trước/sau: **190 → 118, đã dùng 72 credits**. Đây là overrun so với trần task 40 credits: dịch vụ trừ 72 cho một lệnh 1K/Standard; dừng toàn bộ job trả phí tiếp theo ngay sau khi đọc balance, vẫn giữ 118 (>30) dự phòng. CEO cần ghi nhận exception; không được báo ngân sách đạt.
+
+#### Rejected variants / use restrictions
+
+1. `speed-boost.png`: không dùng trong MVP vì tạo collectible/power-up thứ hai và mâu thuẫn input “chỉ chọn lane”.
+2. `hud-left.png`, `hud-right.png`: không dùng như control thường trực; chúng có nguy cơ che 3D telegraph và làm người chơi hiểu sai rằng phải bấm nút nhỏ.
+3. Source sheet nguyên khối: không tích hợp trực tiếp vì kích thước 1536×1152 và layout có khoảng trống; chỉ selected crop đã kiểm tra alpha mới là candidate.
+4. Chưa có model 3D, normal map hay texture PBR từ Meowa. FE chỉ được dùng bộ này làm reference/UI/key art hoặc billboarding có chủ đích sau CEO approval; mesh 3D phải được thiết kế riêng nếu cần.
+
+#### Mobile readability và accessibility
+
+- Giữ player/hazard/shard tối thiểu 44 CSS px ở tutorial/icon context; trong scene phải playtest silhouette tại 390×844 và 844×390, không suy từ contact sheet lớn.
+- Hazard luôn giữ lõi đỏ và cạnh nhọn; shard giữ silhouette bo tròn/vàng. Khi monochrome/desaturate vẫn phải phân biệt bằng contour trước khi tích hợp.
+- HUD crop có alpha thật `(0,255)`; thêm nền focus/pressed bằng CSS, touch target >=44×44 và text/ARIA label, không dùng hình icon thay accessible name.
+- Glow trên icon/cover là marketing; runtime phải theo reduced-motion/performance budget, không thêm particle hoặc bloom chỉ để bắt chước key art.
+
+**Gate:** artifact hiện chỉ đạt `DESIGN-READY-FOR-CEO-REVIEW`. CEO phải chọn/điều chỉnh/reject bộ asset trong PRD trước khi có task FE integration; trạng thái này không phải `PRD-APPROVED`.
+
 ## 9. MoSCoW
 
 ### Must
@@ -670,12 +726,12 @@ Không được claim “fun” từ FPS, visual polish hoặc lời nhận xét
 
 ## 16. Handoff decision
 
-FE được phép bắt đầu implementation theo MVP này. Ưu tiên theo thứ tự:
+Primitive MVP đã tồn tại trong codebase, nhưng **FE chưa được tích hợp bộ artifact Meowa** cho tới khi CEO duyệt mục 8.4. Sau approval, thứ tự tích hợp đề xuất là:
 
 1. State machine + deterministic course + pure rules.
-2. 3-lane control + collision + win/fail/retry bằng primitive visuals.
-3. HUD/wireflow và full-run automation.
-4. Gameplay readability/feedback.
+2. Giữ 3-lane control + collision + win/fail/retry bằng primitive visuals làm fallback.
+3. HUD/wireflow và full-run automation; chỉ thay icon đã duyệt, không thay business rule.
+4. Gameplay readability/feedback; đối chiếu asset ở kích thước mobile trước khi thay visual.
 5. Performance tuning, audio Should và polish.
 
 Không dành thời gian cho backend, asset pipeline lớn, unlock, nhiều level hoặc leaderboard. Quyết định release cuối cần BA acceptance + performance evidence + FUN-GATE playtest; QA pass riêng không thay thế các gate này.
