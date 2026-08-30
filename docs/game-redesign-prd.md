@@ -1,7 +1,7 @@
 # PRD — Linh Quang: Vượt Bão
 
 - Sản phẩm: Babylon Pilot redesign
-- Trạng thái: **Design-ready for CEO review — chưa duyệt tích hợp artifact**
+- Trạng thái: **PRD-APPROVED — CEO đã duyệt visual Meowa cho FE handoff**
 - Owner: Product / BA / Solution Architecture / UI/UX
 - Ngày chốt: 2026-08-30 (GMT+7)
 - Canonical URL: https://thaitrn.github.io/babylon-pilot/
@@ -399,7 +399,7 @@ Hazard phải có core đỏ/nhọn; không chỉ đổi vàng sang tím. Backgr
 - Không animation trang trí vô hạn trên DOM. Aurora ở scene có quality tiers.
 - Reduced motion: no full-screen flash, camera impulse <=2px equivalent, particle emit giảm >=50%.
 
-### 8.4 Visual direction và artifact Meowa — CEO review gate
+### 8.4 Visual direction và artifact Meowa — CEO approved
 
 **Vai trò UI/UX + Product:** bộ 2D dưới đây là concept/marketing/HUD source phù hợp scene 3D tối giản hiện tại; không được mô tả như model 3D hay tự động thay thế primitive Babylon.js. Silhouette player trắng-xanh, collectible vàng bo tròn và hazard đỏ-tím nhọn giữ đúng contract mục 4.1. Background tiếp tục là navy/aurora giảm saturation để gameplay object nổi rõ.
 
@@ -437,7 +437,7 @@ Hazard phải có core đỏ/nhọn; không chỉ đổi vàng sang tím. Backgr
 
 - Meowa job: `job_aff52e9d3a46447fbafaff06da954197`; capability `ui-gen-run`, Generate, Image-2, 1K, 4:3, Standard, normal path, standard background removal. Sanitized source manifest nằm cạnh `ui_output.png` trong `final_outputs.json`.
 - Hậu xử lý local có kiểm soát bằng `assets/meowa/process_assets.py`: crop đúng segmentation bounds đã trả về, ghép hazard family, resize Lanczos, thêm nền/glow/lane/portal và typography cho icon/cover; không chạy thêm generative model và không giả lập model 3D.
-- Credits trước/sau: **190 → 118, đã dùng 72 credits**. Đây là overrun so với trần task 40 credits: dịch vụ trừ 72 cho một lệnh 1K/Standard; dừng toàn bộ job trả phí tiếp theo ngay sau khi đọc balance, vẫn giữ 118 (>30) dự phòng. CEO cần ghi nhận exception; không được báo ngân sách đạt.
+- Credits trước/sau: **190 → 118, đã dùng 72 credits**. Đây là overrun so với trần task 40 credits: dịch vụ trừ 72 cho một lệnh 1K/Standard; dừng toàn bộ job trả phí tiếp theo ngay sau khi đọc balance, vẫn giữ 118 (>30) dự phòng. CEO đã chấp nhận ngoại lệ 32 credits ngày 2026-08-30; không được báo ngân sách đạt và không được generate trả phí thêm.
 
 #### Rejected variants / use restrictions
 
@@ -453,7 +453,13 @@ Hazard phải có core đỏ/nhọn; không chỉ đổi vàng sang tím. Backgr
 - HUD crop có alpha thật `(0,255)`; thêm nền focus/pressed bằng CSS, touch target >=44×44 và text/ARIA label, không dùng hình icon thay accessible name.
 - Glow trên icon/cover là marketing; runtime phải theo reduced-motion/performance budget, không thêm particle hoặc bloom chỉ để bắt chước key art.
 
-**Gate:** artifact hiện chỉ đạt `DESIGN-READY-FOR-CEO-REVIEW`. CEO phải chọn/điều chỉnh/reject bộ asset trong PRD trước khi có task FE integration; trạng thái này không phải `PRD-APPROVED`.
+**Gate:** `PRD-APPROVED` ngày 2026-08-30. CEO Jack.T đã review contact sheet, duyệt bộ visual được chọn, chấp nhận ngoại lệ Meowa 72/40 credits và cho phép chuẩn bị handoff FE. Approval này không biến sprite/key art 2D thành model 3D và không nới MVP scope hoặc các release gate còn lại.
+
+#### Decision log
+
+| Ngày | Người quyết định | Quyết định | Hệ quả / guardrail |
+|---|---|---|---|
+| 2026-08-30 | CEO Jack.T | Duyệt contact sheet và selected assets; chấp nhận Meowa actual 72 credits so với cap 40 | Chốt PRD với manifest hiện tại; dừng toàn bộ paid generation, giữ balance 118 làm reserve; cho phép chuẩn bị FE handoff nhưng không tự động duyệt release |
 
 ## 9. MoSCoW
 
@@ -726,7 +732,7 @@ Không được claim “fun” từ FPS, visual polish hoặc lời nhận xét
 
 ## 16. Handoff decision
 
-Primitive MVP đã tồn tại trong codebase, nhưng **FE chưa được tích hợp bộ artifact Meowa** cho tới khi CEO duyệt mục 8.4. Sau approval, thứ tự tích hợp đề xuất là:
+Primitive MVP đã tồn tại trong codebase và CEO đã duyệt bộ artifact Meowa tại mục 8.4. FE được phép nhận handoff theo thứ tự tích hợp đề xuất sau:
 
 1. State machine + deterministic course + pure rules.
 2. Giữ 3-lane control + collision + win/fail/retry bằng primitive visuals làm fallback.
