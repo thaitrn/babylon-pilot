@@ -24,7 +24,8 @@ const spirits: Spirit[] = [];
 const TARGET = 10;
 
 const testHook = ((window as any).__bgTest ||= {
-  taps: 0, bursts: 0, score: 0, particleCount: 0, pageErrors: [], ready: false,
+  taps: 0, bursts: 0, score: 0, particleCount: 0, pageErrors: [] as string[], ready: false,
+  fps: 0, engine: "", spiritWorlds: [] as { x: number; y: number }[], fpsSamples: [] as number[],
 });
 
 /* ===== (1) WebGPU engine with automatic WebGL2 fallback ===== */
@@ -41,11 +42,13 @@ async function createEngine(): Promise<Engine> {
       const t = new Promise<never>((_, rej) => setTimeout(() => rej(new Error("wgpu timeout")), 2500));
       const e = await Promise.race([attempt, t]);
       tagEl.textContent = "WebGPU";
+      testHook.engine = "WebGPU";
       return e;
     } catch { /* fall through */ }
   }
   const e2 = new Engine(canvas, true, { antialias: true });
   tagEl.textContent = "WebGL2 fallback";
+  testHook.engine = "WebGL2 fallback";
   return e2;
 }
 
@@ -140,6 +143,7 @@ function spawnSpirit(i: number): void {
   );
   mesh.position.copyFrom(base);
   spirits.push({ mesh, mat, alive: true, phase: Math.random() * Math.PI * 2, base });
+  testHook.spiritWorlds.push({ x: base.x, y: base.y });
 }
 
 /* post-processing: bloom + tone mapping (ACES) + FXAA */
@@ -262,7 +266,8 @@ async function init(): Promise<void> {
     if (acc >= 500) {
       const fps = Math.round((frames * 1000) / acc);
       fpsEl.textContent = fps + " fps";
-      (testHook as any).fps = fps;
+      testHook.fps = fps;
+      testHook.fpsSamples.push(fps);
       testHook.particleCount = (aurora as any).activeParticleCount ?? 0;
       frames = 0; acc = 0;
     }
