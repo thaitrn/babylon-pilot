@@ -45,7 +45,7 @@ function median(arr) {
 async function launch(kind) {
   const launcher = kind === "webkit" ? webkit : chromium;
   const exe = resolveBrowserExe(kind);
-  const opts = { headless: true, args: ["--use-angle=metal", "--enable-webgl", "--ignore-gpu-blocklist"] };
+  const opts = { headless: false, args: ["--use-angle=metal", "--enable-webgl", "--ignore-gpu-blocklist"] };
   if (exe) opts.executablePath = exe;
   try {
     return await launcher.launch(opts);
@@ -55,7 +55,7 @@ async function launch(kind) {
     // Chromium channel fallback (system Chrome)
     return await chromium.launch({
       channel: "chrome",
-      headless: true,
+      headless: false,
       args: opts.args,
     });
   }
@@ -88,6 +88,13 @@ async function runViewport(browser, name, viewport, hasTouch, useTap) {
   const engineTag = await page.textContent("#engine-tag");
   let hook = await page.evaluate(() => JSON.parse(JSON.stringify(window.__bgTest)));
 
+  // AC-05: 10s FPS sample after ready (hook ~every 500ms)
+  const fpsStart = Date.now();
+  await page.waitForTimeout(10500);
+  const fpsHook = await page.evaluate(() => JSON.parse(JSON.stringify(window.__bgTest)));
+  const samples = (fpsHook.fpsSamples || []).filter((n) => n > 0);
+  const last10s = samples.slice(-20);
+
   // one pointer -> one tap + at least one burst
   const cx = Math.round(viewport.width / 2);
   const cy = Math.round(viewport.height / 2);
@@ -117,13 +124,6 @@ async function runViewport(browser, name, viewport, hasTouch, useTap) {
     }
     full = await page.evaluate(() => JSON.parse(JSON.stringify(window.__bgTest)));
   }
-
-  // 10s FPS sample (hook updates ~every 500ms)
-  const fpsStart = Date.now();
-  await page.waitForTimeout(10500);
-  const fpsHook = await page.evaluate(() => JSON.parse(JSON.stringify(window.__bgTest)));
-  const samples = (fpsHook.fpsSamples || []).filter((n) => n > 0);
-  const last10s = samples.slice(-20);
 
   await context.close();
   return {

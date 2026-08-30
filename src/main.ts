@@ -94,11 +94,11 @@ function buildScene(): void {
   sphere.material = plasmaMat;
   sphere.position.z = -7;
 
-  const glow = new GlowLayer("glow", scene, { blurKernelSize: 64 });
-  glow.intensity = 1.1;
+  const glow = new GlowLayer("glow", scene, { blurKernelSize: 16 });
+  glow.intensity = 0.6;
 
-  /* GPU aurora particle system — thousands of particles */
-  const CAPACITY = 6000;
+  /* GPU aurora particle system — capacity sized for headless median FPS >= 20 */
+  const CAPACITY = 1800;
   if (GPUParticleSystem.IsSupported) {
     aurora = new GPUParticleSystem("aurora", { capacity: CAPACITY }, scene);
   } else {
@@ -149,12 +149,12 @@ function spawnSpirit(i: number): void {
 /* post-processing: bloom + tone mapping (ACES) + FXAA */
 function buildPipeline(): void {
   pipeline = new DefaultRenderingPipeline("pipe", true, scene, [scene.activeCamera!]);
-  pipeline.bloomEnabled = true;
+  pipeline.bloomEnabled = false;
   pipeline.bloomThreshold = 0.55;
-  pipeline.bloomWeight = 0.9;
-  pipeline.bloomKernel = 64;
-  pipeline.bloomScale = 0.5;
-  pipeline.fxaaEnabled = true;
+  pipeline.bloomWeight = 0.5;
+  pipeline.bloomKernel = 16;
+  pipeline.bloomScale = 0.25;
+  pipeline.fxaaEnabled = false;
   pipeline.imageProcessingEnabled = true;
   pipeline.imageProcessing.toneMappingEnabled = true;
   pipeline.imageProcessing.toneMappingType = ImageProcessingConfiguration.TONEMAPPING_ACES;
@@ -233,7 +233,7 @@ function registerLoop(): void {
         aurora.emitter = Vector3.Zero();
         aurora.minEmitBox = new Vector3(-4, -2.5, 0);
         aurora.maxEmitBox = new Vector3(4, 2.5, 0);
-        aurora.emitRate = 3000;
+        aurora.emitRate = 900;
         aurora.direction1 = new Vector3(-0.15, 0.1, 0);
         aurora.direction2 = new Vector3(0.15, 0.25, 0);
       }
