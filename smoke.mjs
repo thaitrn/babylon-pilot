@@ -45,7 +45,9 @@ function median(arr) {
 async function launch(kind) {
   const launcher = kind === "webkit" ? webkit : chromium;
   const exe = resolveBrowserExe(kind);
-  const opts = { headless: false, args: ["--use-angle=metal", "--enable-webgl", "--ignore-gpu-blocklist"] };
+  const opts = kind === "webkit"
+    ? { headless: true }
+    : { headless: false, args: ["--use-angle=metal", "--enable-webgl", "--ignore-gpu-blocklist"] };
   if (exe) opts.executablePath = exe;
   try {
     return await launcher.launch(opts);
