@@ -1,5 +1,7 @@
 # Babylon Pilot — MVP và release acceptance
 
+> **SUPERSEDED (2026-08-30):** Tài liệu này mô tả tech pilot cũ và chỉ còn giá trị lịch sử/evidence. Gameplay MVP mới, wireflow, acceptance criteria, architecture và FUN-GATE nằm tại [`game-redesign-prd.md`](./game-redesign-prd.md). Khi có xung đột, PRD mới là nguồn sự thật.
+
 - Gate owner: Product / BA / Solution Architecture / UI/UX
 - Quyết định PM: **REQUEST-CHANGES cho bản phát hành hiện tại**
 - Canonical public URL đã chốt: **https://thaitrn.github.io/babylon-pilot/**
