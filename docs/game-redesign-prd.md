@@ -453,6 +453,8 @@ Hazard phải có core đỏ/nhọn; không chỉ đổi vàng sang tím. Backgr
 - HUD crop có alpha thật `(0,255)`; thêm nền focus/pressed bằng CSS, touch target >=44×44 và text/ARIA label, không dùng hình icon thay accessible name.
 - Glow trên icon/cover là marketing; runtime phải theo reduced-motion/performance budget, không thêm particle hoặc bloom chỉ để bắt chước key art.
 
+**QA evidence:** `assets/meowa/qa-report.md` — verdict PASS (với ngoại lệ ngân sách CEO-accepted), bao gồm kiểm format/size/alpha 16 selected assets, contrast Rec.601 công khai và tái lập được, provenance job Meowa và hậu xử lý bằng `process_assets.py`. Contact sheet CEO review: `assets/meowa/contact-sheet.png` (1800×1500). Tham chiếu chéo manifest chi tiết: `assets/meowa/design-brief.md`.
+
 **Gate:** `PRD-APPROVED` ngày 2026-08-30. CEO Jack.T đã review contact sheet, duyệt bộ visual được chọn, chấp nhận ngoại lệ Meowa 72/40 credits và cho phép chuẩn bị handoff FE. Approval này không biến sprite/key art 2D thành model 3D và không nới MVP scope hoặc các release gate còn lại.
 
 #### Decision log
