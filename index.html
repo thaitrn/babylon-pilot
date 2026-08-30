@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>Khoa học lung linh — Babylon.js pilot</title>
+<title>Linh Quang: Vượt Bão</title>
 <link rel="canonical" href="https://thaitrn.github.io/babylon-pilot/" />
-<meta name="description" content="Chạm hoặc click để thu thập 10 linh thể phát sáng giữa cực quang hạt 3D." />
-<meta property="og:title" content="Khoa học lung linh" />
-<meta property="og:description" content="Chạm hoặc click để thu thập 10 linh thể phát sáng giữa cực quang hạt 3D." />
+<meta name="description" content="Lái Phi Thuyền Linh Quang qua bão cực quang, né Mảnh Vỡ và gom đủ 12 Mảnh Sáng trước khi Cổng Bình Minh khép lại." />
+<meta property="og:title" content="Linh Quang: Vượt Bão" />
+<meta property="og:description" content="Thu 12 Mảnh Sáng • Né Mảnh Vỡ • 3 Khiên. Arcade 70 giây trên trình duyệt." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://thaitrn.github.io/babylon-pilot/" />
 <meta property="og:image" content="https://thaitrn.github.io/babylon-pilot/og-1200x630.png" />
@@ -17,22 +17,58 @@
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
 <style>
-  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; touch-action: none; overscroll-behavior: none; }
-  #renderCanvas { width: 100%; height: 100%; display: block; outline: none; touch-action: none; }
-  #hud {
-    position: fixed; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 0; right: 0;
-    display: flex; justify-content: center; gap: 14px; pointer-events: none;
-    font-family: -apple-system, system-ui, sans-serif; color: #cfe9ff;
-    text-shadow: 0 0 10px #37a6ff88; font-size: 16px; z-index: 10; user-select: none;
+  :root {
+    --bg-deep: #05081A;
+    --player: #EAFBFF;
+    --shard: #FFD76A;
+    --danger: #FF4D6D;
+    --success: #66F2A3;
+    --text: #F4F8FF;
+    --text-muted: #A9B8D8;
+    --panel: rgba(5, 8, 26, .82);
   }
-  #hud b { color: #fff; }
-  #engine-tag { position: fixed; bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); left: 12px; font-size: 11px; color: #7fb6d8aa; font-family: monospace; pointer-events: none; z-index: 10; }
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg-deep); touch-action: none; overscroll-behavior: none; }
+  #renderCanvas { width: 100%; height: 100%; display: block; outline: none; touch-action: none; }
+  .ui-root { position: fixed; inset: 0; pointer-events: none; z-index: 10; font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text); }
+  .hud-bar {
+    position: absolute; top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
+    width: min(720px, calc(100% - 24px)); display: flex; justify-content: space-between; align-items: center;
+    font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; text-shadow: 0 2px 12px #000;
+    padding: 0 8px;
+  }
+  .hud-obj { color: var(--shard); }
+  .hud-timer.amber { color: #FFD76A; }
+  .hud-shields { color: #66E3FF; letter-spacing: 2px; }
+  .hud-score { position: absolute; top: calc(max(12px, env(safe-area-inset-top)) + 34px); left: max(16px, env(safe-area-inset-left)); font-size: 14px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .hud-combo { position: absolute; left: 50%; bottom: 28%; transform: translate(48px, 0); font-size: 20px; font-weight: 700; color: var(--shard); }
+  .hud-toast { position: absolute; left: 50%; top: 22%; transform: translateX(-50%); background: var(--panel); padding: 8px 16px; border-radius: 8px; letter-spacing: .08em; font-weight: 700; }
+  .flash { position: absolute; inset: 0; background: rgba(255,77,109,.22); pointer-events: none; }
+  .overlay, .pause-layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: auto; background: rgba(5,8,26,.55); }
+  .card { width: min(88vw, 420px); background: var(--panel); border: 1px solid #2a3d73; border-radius: 16px; padding: 28px 22px; text-align: center; }
+  .title { font-size: clamp(28px, 6vw, 40px); font-weight: 700; margin: 0 0 8px; }
+  .pitch { font-size: 16px; color: var(--text-muted); margin: 0 0 16px; }
+  .rules { font-size: 15px; margin: 0 0 8px; }
+  .meta, .hint { font-size: 14px; color: var(--text-muted); }
+  .row { display: flex; gap: 12px; justify-content: center; align-items: center; margin-top: 18px; }
+  .cta, .mute, #btn-resume {
+    pointer-events: auto; min-width: 44px; min-height: 44px; border: 0; border-radius: 10px;
+    font-weight: 700; font-size: 16px; cursor: pointer; background: #66E3FF; color: #05081A;
+    padding: 12px 22px;
+  }
+  .cta:focus, .mute:focus { outline: 2px solid #fff; outline-offset: 2px; }
+  .mute { padding: 12px; background: #1a2a55; color: var(--text); }
+  .mute.off { opacity: .6; }
+  .count { font-size: 80px; font-weight: 700; }
+  .win { color: var(--success); }
+  .fail { color: var(--danger); }
+  .grade { font-size: 18px; font-weight: 700; }
+  .lost { position: fixed; inset: auto 12px 24px; background: var(--panel); color: #fff; padding: 12px; z-index: 20; }
+  .engine-tag { display: none; }
 </style>
 </head>
 <body>
   <canvas id="renderCanvas"></canvas>
-  <div id="hud">✨ <b id="score">0</b>/10 <span id="fps" style="opacity:.7"></span></div>
-  <div id="engine-tag">init…</div>
+  <div id="ui"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
