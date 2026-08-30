@@ -1,3 +1,6 @@
 node_modules
 dist
 src/_part1.txt
+.vercel
+
+.env*

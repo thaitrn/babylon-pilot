@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
 
-// Project Pages (thaitrn.github.io/babylon-pilot/) yêu cầu base tương đối
+// Vercel production serves at domain root (not GitHub Pages /babylon-pilot/).
 export default defineConfig({
-  base: "/babylon-pilot/",
+  base: "/",
   build: {
     target: "es2020",
     chunkSizeWarningLimit: 6500,
