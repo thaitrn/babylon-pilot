@@ -41,7 +41,7 @@ export function mountHud(parent: HTMLElement): HudHandles {
     <div class="hud-combo" id="hud-combo" hidden></div>
     <div class="hud-toast" id="hud-toast" hidden></div>
     <div class="flash" id="hud-flash" hidden></div>
-    <div class="overlay" id="overlay"></div>
+    <div class="overlay" id="overlay" hidden></div>
     <div class="pause-layer" id="pause-layer" hidden>
       <p>Tạm dừng</p>
       <button type="button" class="cta" id="btn-resume">CHẠM ĐỂ TIẾP TỤC</button>
@@ -157,8 +157,10 @@ export function renderHud(h: HudHandles, state: RunState, settings: PersistentSe
     h.overlay.append(card);
   } else if (state.phase === "SUCCESS" || state.phase === "FAILURE") {
     h.overlay.hidden = true;
-  } else if (state.phase === "PLAYING" || state.phase === "PORTAL_CHECK") {
+    h.overlay.innerHTML = "";
+  } else if (state.phase === "PLAYING" || state.phase === "PORTAL_CHECK" || state.phase === "PAUSED") {
     h.overlay.hidden = true;
+    h.overlay.innerHTML = "";
   }
 
   void reduced;
